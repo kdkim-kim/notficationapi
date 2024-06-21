@@ -5,7 +5,7 @@ from pymysql import connect
 
 class tags(SQLModel, table=True):
     tag_id: Optional[int] = Field(default=None, primary_key=True)
-    name: str
+    tag: str
     
 class Users(SQLModel, table=True):
     user_id: Optional[int] = Field(default=None, primary_key=True)
@@ -35,6 +35,6 @@ SQLModel.metadata.create_all(engine)
 #    session.commit()
 
 with Session(engine) as session:
-    statement = select(Users)
+    statement = select(tags, tags[1]).join(tags)
     hero = session.exec(statement).all()
     print(hero)
