@@ -139,7 +139,6 @@ def dataSearch(sql, inVal):   # 데이타 검색 컨트롤 함수
     mydb = connect_db()
     cursor = mydb.cursor()
     try:
-        print(sql)
         cursor.execute(sql, inVal)
         result = cursor.fetchall()
         cursor.close()
