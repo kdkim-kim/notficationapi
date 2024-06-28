@@ -129,7 +129,7 @@ def dataControl(strsql, inVal):    # 데이타 입력 수정 삭제 컨트롤 �
             last_id = inVal
         cursor.close()
         return last_id
-    except pymysql.connect.Error as err:
+    except connect.Error as err:
         print(f"Error: {err}, sql: {strsql}, inVal: {inVal}")
     finally:
         mydb.close()
