@@ -2,7 +2,7 @@ import os, json
 from PySide6.QtWidgets import QApplication, QMessageBox
 from pymysql import connect
 
-file_jason = os.path.join(os.path.dirname(os.path.abspath(__file__)), "secrets.json")
+file_jason = os.path.join(os.path.dirname(os.path.abspath(__file__)), "secrets.json") # 디비 접속 자료 json 파일
 secrets_data = json.loads(open(file_jason).read())
 db = secrets_data["DB"]
 db_host = db["Host"]
