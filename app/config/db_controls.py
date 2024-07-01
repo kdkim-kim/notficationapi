@@ -1,5 +1,5 @@
 import os, json
-from PySide6.QtWidgets import QApplication, QMessageBox
+#from PySide6.QtWidgets import QApplication, QMessageBox
 from pymysql import connect
 
 file_jason = os.path.join(os.path.dirname(os.path.abspath(__file__)), "secrets.json") # 디비 접속 자료 json 파일
@@ -99,19 +99,6 @@ def create_tables(var): #DB_ 테이블 생성
 
         cursor.close()
         mydb.close()
-
-        if QApplication.instance():
-            app = QApplication.instance()
-        else:
-            app = QApplication([])
-
-        messgeBox = QMessageBox()
-        messgeBox.setIcon(QMessageBox.Icon.Information)
-        messgeBox.setWindowTitle("DB CREATE")
-        messgeBox.setText(f"{var} 테이블을 생성 했습니다")
-        messgeBox.exec()
-        app.quit()
-
     else:
         pass
 
