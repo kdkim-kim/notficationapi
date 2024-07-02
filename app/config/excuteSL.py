@@ -34,7 +34,7 @@ def userPassAtuth(user:str, api_key:str): # 패스워드 검증
     return result
 
 def getSubclass(): #  분류값 추출
-    str_sql = "select subclass from login_pass where users = %s and a_key = %s"
-    vars = [user, api_key]
+    str_sql = "select * from subClass where subClass_id > %s ORDER BY subClass"
+    vars = [0,]
     result = dataSearch(str_sql, vars)
     return result

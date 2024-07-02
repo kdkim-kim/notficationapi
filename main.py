@@ -6,7 +6,7 @@ from starlette.responses import JSONResponse
 from pydantic import BaseModel
 from passlib.context import CryptContext
 
-from app.config.excuteSL import userAPIkey, userPasschk, cre_pass, userPassAtuth, create_tables
+from app.config.excuteSL import userAPIkey, userPasschk, cre_pass, userPassAtuth, create_tables, getSubclass
 from app.config.schema import passNum
 
 app = FastAPI() # FASTAPI
@@ -91,7 +91,8 @@ async def check_pass(pass_num: passNum):
 
 @app.get("/app/getSubClass/", dependencies=[Depends(get_active_auth)])
 async def get_subclass():
-    pass
+    result = getSubclass()
+    return {result}
 
 
 
