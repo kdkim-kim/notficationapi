@@ -34,7 +34,6 @@ def create_table_if_not_exists():   #테이블이 없을시 생성
         if cre_tables[i] not in str(tables): #테이블명이 없을시 생성
             create_tables(cre_tables[i]) # 테이블 생성 함수
 
-
 def create_tables(var): #DB_ 테이블 생성
     table_sql = ""
     if var == "think_":
@@ -87,20 +86,17 @@ def create_tables(var): #DB_ 테이블 생성
 	        CONSTRAINT `FK__tags` FOREIGN KEY (`tag_id`) REFERENCES `tags` (`tag_id`) ON UPDATE NO ACTION ON DELETE NO ACTION
             ) COLLATE='utf8mb4_general_ci' ;
         """
-
     if table_sql:
         mydb = connect_db()
         cursor = mydb.cursor()
-        cursor.execute(table_sql)
-        mydb.commit()
-        if var == "login_pass":
-            cursor.execute("INSERT INTO login_pass VALUES(6,8,0,4,0,8);")
+        try:
+            cursor.execute(table_sql)
             mydb.commit()
-
-        cursor.close()
-        mydb.close()
-    else:
-        pass
+        except connect.Error as err:
+            print(f"Error: {err}, sql: {table_sql}")
+        finally:
+            cursor.close()
+            mydb.close()
 
 def dataControl(strsql, inVal):    # 데이타 입력 수정 삭제 컨트롤 함수
     mydb = connect_db()
