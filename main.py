@@ -6,7 +6,8 @@ from starlette.responses import JSONResponse
 from pydantic import BaseModel
 from passlib.context import CryptContext
 
-from app.config.excuteSL import userAPIkey, userPasschk, cre_pass, userPassAtuth, create_tables, getSubclass
+from app.config.excuteSL import ( userAPIkey, userPasschk, cre_pass, userPassAtuth, create_tables, getSubclass, getSource,
+    getTags, get_widget_tag, getSubclassit )
 from app.config.schema import passNum
 
 app = FastAPI() # FASTAPI
@@ -45,7 +46,7 @@ async def get_api_key(api_key_: str = Depends(api_key_header), username: str = D
 
 async def get_active_auth(api_key: str = Depends(api_key_header)): # 접속시 할당 받은 키 값과 접속프로그램의 키캆 비교
     global API_KEY, USER
-    print(api_key, API_KEY)
+    #print(api_key, API_KEY)
     if API_KEY == api_key:
         return
     else:
@@ -89,14 +90,33 @@ async def check_pass(pass_num: passNum):
     else:
         return False
 
-@app.get("/app/getSubClass/", dependencies=[Depends(get_active_auth)])
+@app.get("/app/getSubClass/", dependencies=[Depends(get_active_auth)]) # 분류 값 반환
 async def get_subclass():
     result = getSubclass()
     return {result}
 
+@app.get("/app/getSource/", dependencies=[Depends(get_active_auth)]) # @app 출처 값 반환
+async def get_Souce():
+    result = getSource()
+    return {result}
+
+@app.get("/app/get_tags/", dependencies=[Depends(get_active_auth)]) # @app 태그 값 반환
+async def get_tags():
+    result = getTags()
+    return {result}
+
+@app.get("/app/get_taglists/{vals}", dependencies=[Depends(get_active_auth)]) # @app 위젯용 태그list VALUE 반환
+async def get_taglists(vals: str):
+    result = get_widget_tag(vals)
+    return {result}
+
+@app.get("/app/getSubclass_it/{vals}", dependencies=[Depends(get_active_auth)]) # @app 분류명 검색
+async def get_subclass_it(vals: str):
+    result = getSubclassit(vals)
+    return {result}
 
 
-#@app.exception_handler(HTTPException)
+#@app.exception_handler(HTTPException)ㅁ
 #async def http_exception_handler(request: Request, exc: HTTPException):
 #    return JSONResponse(status_code=exc.status_code, content={"message": exc.detail})
 

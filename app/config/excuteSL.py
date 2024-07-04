@@ -38,3 +38,28 @@ def getSubclass(): #  분류값 추출
     vars = [0,]
     result = dataSearch(str_sql, vars)
     return result
+
+def getSource(): # 소스값 추출
+    str_sql = "select * from sources where source_id > %s ORDER BY source"
+    vars = [0,]
+    result = dataSearch(str_sql, vars)
+    return result
+
+def getTags(): # 태그 추출
+    str_sql = "select * from tags ORDER BY tag"
+    vars = None
+    result = dataSearch(str_sql, vars)
+    return result
+
+def get_widget_tag(val:str): # 태그 위젯용 리스트
+    str_sql = "select * FROM tags WHERE tag REGEXP %s ORDER BY tag"
+    vars = [val,]
+    return dataSearch(str_sql, vars)
+
+def getSubclassit(var:str): # 분류명 검색
+    str_sql = "select count(*) from subClass WHERE subClass = %s"
+    vars = [var,]
+    return dataSearch(str_sql, vars)
+
+
+
