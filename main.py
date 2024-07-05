@@ -1,4 +1,4 @@
-from typing import Optional
+from typing import Union
 from fastapi import FastAPI, Depends, HTTPException, Header, status
 from fastapi.security import APIKeyHeader
 from starlette.requests import Request
@@ -6,8 +6,8 @@ from starlette.responses import JSONResponse
 from pydantic import BaseModel
 from passlib.context import CryptContext
 
-from app.config.excuteSL import ( userAPIkey, userPasschk, cre_pass, userPassAtuth, create_tables, getSubclass, getSource,
-    getTags, get_widget_tag, getSubclassit )
+from app.config.excuteSL import (userAPIkey, userPasschk, cre_pass, userPassAtuth, create_tables, get_widget_tag, get_data,
+    in_sub_data, del_data_)
 from app.config.schema import passNum
 
 app = FastAPI() # FASTAPI
@@ -90,32 +90,28 @@ async def check_pass(pass_num: passNum):
     else:
         return False
 
-@app.get("/app/getSubClass/", dependencies=[Depends(get_active_auth)]) # 분류 값 반환
-async def get_subclass():
-    result = getSubclass()
-    return {result}
-
-@app.get("/app/getSource/", dependencies=[Depends(get_active_auth)]) # @app 출처 값 반환
-async def get_Souce():
-    result = getSource()
-    return {result}
-
-@app.get("/app/get_tags/", dependencies=[Depends(get_active_auth)]) # @app 태그 값 반환
-async def get_tags():
-    result = getTags()
-    return {result}
-
+############ 검색 ################
 @app.get("/app/get_taglists/{vals}", dependencies=[Depends(get_active_auth)]) # @app 위젯용 태그list VALUE 반환
 async def get_taglists(vals: str):
     result = get_widget_tag(vals)
     return {result}
 
-@app.get("/app/getSubclass_it/{vals}", dependencies=[Depends(get_active_auth)]) # @app 분류명 검색
-async def get_subclass_it(vals: str):
-    result = getSubclassit(vals)
+@app.get("/app/getData/{kind}", dependencies=[Depends(get_active_auth)]) # @app 단일 테이블 의 모든 값 또는 특정 값
+async def getData(kind: str, q:Union[str, None] = None): # ?q= 인자는 None 가능
+    result = get_data(kind, q)
     return {result}
 
+################# 입력 #####################
+@app.get("/app/inSubData/{kind}", dependencies=[Depends(get_active_auth)]) # @app 분류 / 출처 등록
+async def inSubData(kind: str, val: str):
+    result = in_sub_data(kind, val)
+    return {result}
 
+################### 삭제 ###################
+@app.get("/app/data_Controls/delete/{kind}", dependencies=[Depends(get_active_auth)]) # @app 분류 / 출처 삭제
+async def data_Controls_delete(kind: str, val):
+    result = del_data_(kind, val)
+    return {result}
 #@app.exception_handler(HTTPException)ㅁ
 #async def http_exception_handler(request: Request, exc: HTTPException):
 #    return JSONResponse(status_code=exc.status_code, content={"message": exc.detail})

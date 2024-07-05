@@ -33,21 +33,29 @@ def userPassAtuth(user:str, api_key:str): # 패스워드 검증
     result = dataSearch(str_sql, vars)
     return result
 
-def getSubclass(): #  분류값 추출
-    str_sql = "select * from subClass where subClass_id > %s ORDER BY subClass"
-    vars = [0,]
-    result = dataSearch(str_sql, vars)
-    return result
-
-def getSource(): # 소스값 추출
-    str_sql = "select * from sources where source_id > %s ORDER BY source"
-    vars = [0,]
-    result = dataSearch(str_sql, vars)
-    return result
-
-def getTags(): # 태그 추출
-    str_sql = "select * from tags ORDER BY tag"
-    vars = None
+def get_data(kind, val): # 모든 값/ 특정한 값 반환 함
+    if kind == "class":
+        print(val)
+        if val == None:
+            str_sql = "select * from subClass ORDER BY subClass"
+        else:
+            str_sql = "select * from subClass WHERE subClass = %s"
+    elif kind == "source":
+        if val == None:
+            str_sql = "select * from sources ORDER BY source"
+        else:
+            str_sql = "select * from sources WHERE source = %s"
+    elif kind == "tags":
+        if val == None:
+            str_sql = "select * from tags ORDER BY tag"
+        else:
+            str_sql = "select * from tags WHERE tag = %s"
+    elif kind == "verify_class": # 삭제 전 점검
+        str_sql = "select count(*) from think_ WHERE think_class = %s" # 내용에 분류가 있는지 점검
+    if val:
+        vars = [val,]
+    else:
+        vars = None
     result = dataSearch(str_sql, vars)
     return result
 
@@ -56,10 +64,32 @@ def get_widget_tag(val:str): # 태그 위젯용 리스트
     vars = [val,]
     return dataSearch(str_sql, vars)
 
-def getSubclassit(var:str): # 분류명 검색
-    str_sql = "select count(*) from subClass WHERE subClass = %s"
-    vars = [var,]
-    return dataSearch(str_sql, vars)
+################## 입력 메서드 ######################
+def in_sub_data(kind, val): # 분류 / 소스  등록
+    if kind == "class":
+        str_sql = "insert into subClass(subClass) values(%s)"
+    elif kind == "source":
+        str_sql = "insert into sources(source) values(%s)"
+    vars = [val,]
+    return dataControl(str_sql, vars)
 
+################ 삭제 메서드 ######################
+def del_data_(kind, val): # 분류 / 소스  삭제
+    print("delete method called")
+    if kind == "class":
+        think_class_count = get_data("verify_class", val)
+        if think_class_count[0][0] > 0:
+            return "unable"
+        else:
+            str_sql = "delete from subClass where subClass_id = %s"
 
+    elif kind == "source":
+        str_sql = "delete from sources where source_id = %s"
+    vars = [val,]
+    result = dataControl(str_sql, vars)
+    print(result)
+    if result:
+        return "deleted"
+    else:
+        return "failed"
 
