@@ -6,9 +6,8 @@ from starlette.responses import JSONResponse
 from pydantic import BaseModel
 from passlib.context import CryptContext
 
-from app.config.excuteSL import (userAPIkey, userPasschk, cre_pass, userPassAtuth, create_tables, get_widget_tag, get_data,
-    in_sub_data, del_data_)
-from app.config.schema import passNum
+from app.config.excuteSL import schema_auth,schema_data, schema_in, schema_del
+from app.config.schema import passNum, think_
 
 app = FastAPI() # FASTAPI
 
@@ -34,7 +33,7 @@ def verify_password(plain_password, hashed_password): # 입력 패스워드와 �
 async def get_api_key(api_key_: str = Depends(api_key_header), username: str = Depends(username)): # 사용자와 클라이언트 키값 비교
     #api_key_var_ = in_apikey(api_key_) # DB 자료 비교용 키값
     #print(api_key_var_)
-    result = userAPIkey(username, in_apikey(api_key_)) # 관리자로 부터 할당 받은 사용자명과 보안키 값 검증
+    result = schema_auth.userAPIkey(username, in_apikey(api_key_)) # 관리자로 부터 할당 받은 사용자명과 보안키 값 검증
     if result:
         global API_KEY, USER
         API_KEY = api_key_ # 보안키 값을 전역변수에 할당
@@ -56,8 +55,8 @@ async def get_active_auth(api_key: str = Depends(api_key_header)): # 접속시 �
 
 @app.get("/connect/") # @app 최초접속 USER와 KEY 값 검증
 async def connect(api_key: str = Depends(get_api_key), username: str= Depends(username)):
-    result = userPasschk(USER, in_apikey(API_KEY))
-    create_tables()
+    result = schema_auth.userPasschk(USER, in_apikey(API_KEY))
+    schema_auth.create_tables()
     return {result}
 
 @app.post("/app/crePass/", dependencies=[Depends(get_active_auth)]) # @app 패스워드 생성
@@ -69,7 +68,7 @@ async def create_pass(pass_num: passNum):
     hashed_pass4 = get_pass_hash(pass_num.pass4)
     hashed_pass5 = get_pass_hash(pass_num.pass5)
 
-    result = cre_pass(USER, in_apikey(API_KEY), hashed_pass0, hashed_pass1, hashed_pass2, hashed_pass3, hashed_pass4, hashed_pass5)
+    result = schema_auth.cre_pass(USER, in_apikey(API_KEY), hashed_pass0, hashed_pass1, hashed_pass2, hashed_pass3, hashed_pass4, hashed_pass5)
 
     if result:
         return True
@@ -79,7 +78,7 @@ async def create_pass(pass_num: passNum):
 @app.post("/app/chkPass/pass/", dependencies=[Depends(get_active_auth)]) # @app패스워드 검증
 async def check_pass(pass_num: passNum):
     passd = [pass_num.pass0, pass_num.pass1, pass_num.pass2, pass_num.pass3, pass_num.pass4, pass_num.pass5]
-    result = userPassAtuth(USER, in_apikey(API_KEY))
+    result = schema_auth.userPassAtuth(USER, in_apikey(API_KEY))
     i = 0
     for i in range(6):
         if verify_password(passd[i], result[0][i]) == False: # 패스워드가 맞지 않으면 멈춤
@@ -93,24 +92,40 @@ async def check_pass(pass_num: passNum):
 ############ 검색 ################
 @app.get("/app/get_taglists/{vals}", dependencies=[Depends(get_active_auth)]) # @app 위젯용 태그list VALUE 반환
 async def get_taglists(vals: str):
-    result = get_widget_tag(vals)
+    result = schema_data.get_widget_tag(vals)
     return {result}
 
 @app.get("/app/getData/{kind}", dependencies=[Depends(get_active_auth)]) # @app 단일 테이블 의 모든 값 또는 특정 값
 async def getData(kind: str, q:Union[str, None] = None): # ?q= 인자는 None 가능
-    result = get_data(kind, q)
+    result = schema_data.get_data(kind, q)
     return {result}
 
 ################# 입력 #####################
 @app.get("/app/inSubData/{kind}", dependencies=[Depends(get_active_auth)]) # @app 분류 / 출처 등록
 async def inSubData(kind: str, val: str):
-    result = in_sub_data(kind, val)
+    result = schema_in.in_sub_data(kind, val)
+    return {result}
+
+@app.get("/app/inThinkTag/", dependencies=[Depends(get_active_auth)]) # @app 분류list
+async def inThinlTag(th_id: int, tag_id: int):
+    result = schema_in.in_think_tag(th_id, tag_id)
+    return {result}
+
+@app.post("/app/inThinkups/", dependencies=[Depends(get_active_auth)]) # @app 내용 입력
+async def inThinkups(in_think: think_):
+    title = in_think.title
+    contents = in_think.contents
+    think_class = in_think.think_class
+    think_source = in_think.think_source
+    think_filePath = in_think.think_filePath
+    think_fileName = in_think.think_fileName
+    result = schema_in.in_thinks(title, contents, think_class, think_source, think_filePath, think_fileName)
     return {result}
 
 ################### 삭제 ###################
 @app.get("/app/data_Controls/delete/{kind}", dependencies=[Depends(get_active_auth)]) # @app 분류 / 출처 삭제
 async def data_Controls_delete(kind: str, val):
-    result = del_data_(kind, val)
+    result = schema_del.del_data_(kind, val)
     return {result}
 #@app.exception_handler(HTTPException)ㅁ
 #async def http_exception_handler(request: Request, exc: HTTPException):
