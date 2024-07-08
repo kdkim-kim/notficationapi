@@ -95,6 +95,11 @@ async def get_taglists(vals: str):
     result = schema_data.get_widget_tag(vals)
     return {result}
 
+@app.get("/app/getDataId/all/{kind}", dependencies=[Depends(get_active_auth)]) # @app ID 로 데이타 값 조회
+async def getDataId_all(kind: str, qid: int):
+    result = schema_data.get_data_all(kind, qid)
+    return {result}
+
 @app.get("/app/getData/{kind}", dependencies=[Depends(get_active_auth)]) # @app 단일 테이블 의 모든 값 또는 특정 값
 async def getData(kind: str, q:Union[str, None] = None): # ?q= 인자는 None 가능
     result = schema_data.get_data(kind, q)
@@ -107,8 +112,9 @@ async def inSubData(kind: str, val: str):
     return {result}
 
 @app.get("/app/inThinkTag/", dependencies=[Depends(get_active_auth)]) # @app 분류list
-async def inThinlTag(th_id: int, tag_id: int):
-    result = schema_in.in_think_tag(th_id, tag_id)
+async def inThinkTag(th_id: int, tag: int):
+    print(th_id, tag)
+    result = schema_in.in_think_tag(th_id, tag)
     return {result}
 
 @app.post("/app/inThinkups/", dependencies=[Depends(get_active_auth)]) # @app 내용 입력
@@ -119,6 +125,7 @@ async def inThinkups(in_think: think_):
     think_source = in_think.think_source
     think_filePath = in_think.think_filePath
     think_fileName = in_think.think_fileName
+    print(contents)
     result = schema_in.in_thinks(title, contents, think_class, think_source, think_filePath, think_fileName)
     return {result}
 

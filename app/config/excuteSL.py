@@ -41,9 +41,25 @@ class schema_auth: # 로그인 관련
 
 
 class schema_data: # 검색 관련
-    def get_data(kind, val): # 모든 값/ 특정한 값 반환 함
+    def get_data_all(kind:str,varID:int): # 아이디로 모든 값 조회
+        if kind =="content":
+            str_sql = "select * from think_ where think_id = %s"
+        elif kind == "class":
+            str_sql = "select * from subClass where subClass_id = %s"
+        elif kind == "source":
+            str_sql = "select * from sources where source_id = %s"
+        elif kind == "tags":
+            str_sql = """
+                select tags.tag From tags Inner Join tag_think On tag_think.tag_id = tags.tag_id
+                where tag_think.think_id = %s
+            """
+
+        vars = [varID,]
+        result = dataSearch(str_sql, vars)
+        return result
+
+    def get_data(kind, val): # 모든 값/ 특정한 값 반환 함 / 변수가 string
         if kind == "class":
-            print(val)
             if val == None:
                 str_sql = "select * from subClass ORDER BY subClass"
             else:
@@ -61,16 +77,13 @@ class schema_data: # 검색 관련
         elif kind == "verify_class": # 삭제 전 점검
             str_sql = "select count(*) from think_ WHERE think_class = %s" # 내용에 분류가 있는지 점검
         elif kind == "verify_source": # 삭제 전 점검
-            print ("seorce del")
             str_sql = "select count(*) from think_ WHERE think_source = %s" # 내용에 소스가 있는지 점검
-            print(str_sql)
         if val:
             vars = [val,]
         else:
             vars = None
-        print(str_sql, vars)
+
         result = dataSearch(str_sql, vars)
-        print(result)
         return result
 
     def get_widget_tag(val:str): # 태그 위젯용 리스트
@@ -85,17 +98,19 @@ class schema_in: # 입력 관련
             str_sql = "insert into subClass(subClass) values(%s)"
         elif kind == "source":
             str_sql = "insert into sources(source) values(%s)"
+        elif kind == "tags":
+            str_sql = "insert into tags(tag) values(%s)"
         vars = [val,]
         return dataControl(str_sql, vars)
     def in_think_tag(think_id:int, tag_id:int):
-        str_sql = "insert into think_tag(think_id, tag_id) values(%s, %s)"
+        str_sql = "insert into tag_think(think_id, tag_id) values(%s, %s)"
         vars = [think_id, tag_id]
         return dataControl(str_sql, vars)
 
     def in_thinks(title:str, contents:str, think_class:int, think_source:int, think_filePath:str, think_fileName:str): # 내용 입력
         str_sql = """
-            insert into think_(title, contents, think_class, think_source, think_filePath, think_fileName, think_creDdate, think_editDate) 
-            values(%s, %s, %s, %s, %s, %s, %s, %s)"
+            insert into think_(title, contents, think_class, think_source, think_filePath, think_fileName, think_creDate, think_editDate) 
+            values(%s, %s, %s, %s, %s, %s, %s, %s)
         """
         vars = [title, contents, think_class, think_source, think_filePath, think_fileName, datetime.now().strftime('%Y-%m-%d'), datetime.now().strftime('%Y-%m-%d')]
         return dataControl(str_sql, vars)
