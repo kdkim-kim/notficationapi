@@ -19,3 +19,12 @@ class think_(BaseModel):
     think_fileName: Optional[str] = None
     think_creDate: Optional[datetime] = None
     think_editDate: Optional[datetime] = None
+
+class search_(BaseModel):
+    search_tag_0: Optional[int] = None
+    search_tag_1: Optional[int] = None
+    search_tag_2: Optional[int] = None
+    search_tag_3: Optional[int] = None
+    search_tag_4: Optional[int] = None
+    search_subclass: Optional[int] = None
+    search_source: Optional[int] = None

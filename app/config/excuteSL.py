@@ -41,6 +41,11 @@ class schema_auth: # 로그인 관련
 
 
 class schema_data: # 검색 관련
+    def get_search_list(search_tag_0:int, search_tag_1:int, search_tag_2:int, search_tag_3:int, search_tag_4:int,
+                        search_subClass:int, search_source:int): # SEARCH 버튼 클릭시 함수
+        result = ((search_tag_0, search_tag_1, search_tag_2, search_tag_3, search_tag_4, search_subClass, search_source))
+        return result
+
     def get_data_all(kind:str,varID:int): # 아이디로 모든 값 조회
         if kind =="content":
             str_sql = "select * from think_ where think_id = %s"
@@ -84,6 +89,7 @@ class schema_data: # 검색 관련
             vars = None
 
         result = dataSearch(str_sql, vars)
+        print(result)
         return result
 
     def get_widget_tag(val:str): # 태그 위젯용 리스트

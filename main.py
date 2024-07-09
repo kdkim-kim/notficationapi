@@ -7,7 +7,7 @@ from pydantic import BaseModel
 from passlib.context import CryptContext
 
 from app.config.excuteSL import schema_auth,schema_data, schema_in, schema_del
-from app.config.schema import passNum, think_
+from app.config.schema import passNum, think_, search_
 
 app = FastAPI() # FASTAPI
 
@@ -103,6 +103,19 @@ async def getDataId_all(kind: str, qid: int):
 @app.get("/app/getData/{kind}", dependencies=[Depends(get_active_auth)]) # @app 단일 테이블 의 모든 값 또는 특정 값
 async def getData(kind: str, q:Union[str, None] = None): # ?q= 인자는 None 가능
     result = schema_data.get_data(kind, q)
+    return {result}
+
+@app.post("/app/searchResultList/", dependencies=[Depends(get_active_auth)]) # @app 검색
+async def searchResultList(search: search_):
+    search_tag_0 = search.search_tag_0
+    search_tag_1 = search.search_tag_1
+    search_tag_2 = search.search_tag_2
+    search_tag_3 = search.search_tag_3
+    search_tag_4 = search.search_tag_4
+    search_subclass = search.search_subclass
+    search_source = search.search_source
+
+    result = schema_data.get_search_list(search_tag_0, search_tag_1, search_tag_2, search_tag_3, search_tag_4, search_subclass, search_source)
     return {result}
 
 ################# 입력 #####################
