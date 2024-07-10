@@ -43,7 +43,67 @@ class schema_auth: # 로그인 관련
 class schema_data: # 검색 관련
     def get_search_list(search_tag_0:int, search_tag_1:int, search_tag_2:int, search_tag_3:int, search_tag_4:int,
                         search_subClass:int, search_source:int): # SEARCH 버튼 클릭시 함수
-        result = ((search_tag_0, search_tag_1, search_tag_2, search_tag_3, search_tag_4, search_subClass, search_source))
+
+        search_tags = [] # 검색된 태그 아이디 값
+        if search_tag_0 != None:
+            search_tags.append(search_tag_0)
+        if search_tag_1 != None:
+            search_tags.append(search_tag_1)
+        if search_tag_2 != None:
+            search_tags.append(search_tag_2)
+        if search_tag_3 != None:
+            search_tags.append(search_tag_3)
+        if search_tag_4 != None:
+            search_tags.append(search_tag_4)
+
+        subVar = [] # SQL 입력 변수
+        joinSQL = "" # 조인 sql
+        whereSQL = "" # where sql
+        class_source_in = bool # 분류나 소스 검색이 있는지 값
+        print(search_subClass, search_source)
+        if search_subClass == None and search_source == None:
+            class_source_in = False
+        else:
+            if search_subClass != None and search_source == None:
+                joinSQL = "Inner Join subClass On subClass.subClass_id = think_.think_class "
+                whereSQL = "where think_.think_class = %s "
+                subVar.append(search_subClass)
+            elif search_subClass == None and search_source != None:
+                joinSQL = "Inner Join sources On sources.source_id = think_.think_source "
+                whereSQL = "where think_.think_source = %s "
+                subVar.append(search_source)
+            else: # 분류와 소스 모두 검색 할 때
+                joinSQL = """
+                    Inner Join subClass On subClass.subClass_id = think_.think_class 
+                    Inner Join sources On sources.source_id = think_.think_source 
+                    """
+                whereSQL = "where think_.think_class = %s and think_.think_source = %s "
+                subVar.append(search_subClass)
+                subVar.append(search_source)
+            class_source_in = True
+
+        for i in range(len(search_tags)):
+            if i == 0: # 검색 태그가 하나일 경우
+                if class_source_in == True:
+                    joinSQL = joinSQL + "Inner Join tag_think On tag_think.think_id = think_.think_id "
+                    whereSQL = whereSQL + "and tag_think.tag_id = %s "
+                else: # 분류와 출처가 없으면 WHERE 문구가 필요함
+                    joinSQL = joinSQL + "Inner Join tag_think On tag_think.think_id = think_.think_id "
+                    whereSQL = whereSQL + "where tag_think.tag_id = %s "
+            else: # 검색 태그가 하나 이상일 경우
+                joinSQL = joinSQL + f"Inner Join tag_think tag_think_{i} On tag_think_{i}.think_id = think_.think_id "
+                whereSQL = whereSQL + f"and tag_think_{i}.tag_id = %s "
+
+            subVar.append(search_tags[i])    # 변수값 저장
+
+        str_sql = """
+            select DISTINCT think_.think_id, think_.title, think_.think_class, think_.think_source,
+            think_.think_fileName, think_.think_editDate from think_
+        """
+        str_sql = f"{str_sql} {joinSQL} {whereSQL} order by think_.think_editDate desc LIMIT 30"
+        print(str_sql, subVar)
+        result = dataSearch(str_sql, subVar)
+        #result = ((search_tag_0, search_tag_1, search_tag_2, search_tag_3, search_tag_4, search_subClass, search_source))
         return result
 
     def get_data_all(kind:str,varID:int): # 아이디로 모든 값 조회
