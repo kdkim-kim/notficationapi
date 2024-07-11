@@ -142,6 +142,20 @@ async def inThinkups(in_think: think_):
     result = schema_in.in_thinks(title, contents, think_class, think_source, think_filePath, think_fileName)
     return {result}
 
+################## 수정 ###################
+@app.post("/app/updateThinks/", dependencies=[Depends(get_active_auth)]) # @app 패스워드 입력
+async def updateThinks(in_think: think_):
+    think_id = in_think.think_id
+    title = in_think.title
+    contents = in_think.contents
+    think_class = in_think.think_class
+    think_source = in_think.think_source
+    think_filePath = in_think.think_filePath
+    think_fileName = in_think.think_fileName
+    print(contents)
+    result = schema_in.update_thinks(think_id, title, contents, think_class, think_source, think_filePath, think_fileName)
+    return {result[0]}
+
 ################### 삭제 ###################
 @app.get("/app/data_Controls/delete/{kind}", dependencies=[Depends(get_active_auth)]) # @app 분류 / 출처 삭제
 async def data_Controls_delete(kind: str, val):

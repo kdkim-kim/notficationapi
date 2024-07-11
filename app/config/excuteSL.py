@@ -181,6 +181,17 @@ class schema_in: # 입력 관련
         vars = [title, contents, think_class, think_source, think_filePath, think_fileName, datetime.now().strftime('%Y-%m-%d'), datetime.now().strftime('%Y-%m-%d')]
         return dataControl(str_sql, vars)
 
+################ 업데이트 메서드 ###################
+    def update_thinks(think_id:int, title:str, contents:str, think_class:int, think_source:int, think_filePath:str, think_fileName:str): # 내용 수정
+        str_sql = """
+            update think_ set title = %s, contents = %s, think_class = %s, think_source = %s, think_filePath = %s, think_fileName = %s, think_editDate = %s
+            where think_id = %s
+        """
+        vars = [title, contents, think_class, think_source, think_filePath, think_fileName, datetime.now().strftime('%Y-%m-%d'), think_id]
+        print(str)
+        result = dataControl(str_sql, vars)
+        print(result)
+        return result
 class schema_del:
 ################ 삭제 메서드 ######################
     def del_data_(kind, val): # 분류 / 소스  삭제
@@ -197,7 +208,11 @@ class schema_del:
                 return "unable"
             else:
                 str_sql = "delete from sources where source_id = %s"
+        elif kind == "content":
+            str_sql = "delete from think_ where think_id = %s"
 
+        elif kind == "tags_think":
+            str_sql = "delete from tag_think where think_id = %s"
         vars = [val,]
         result = dataControl(str_sql, vars)
         if result:
