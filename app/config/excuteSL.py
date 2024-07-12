@@ -33,6 +33,12 @@ class schema_auth: # 로그인 관련
         print(str_sql, vars)
         return dataControl(str_sql, vars)
 
+    def edit_passNum(user:str, api_key:str, pass0:str, pass1:str, pass2:str, pass3:str, pass4:str, pass5:str): # 패스워드 변경
+        str_sql = "update login_pass set pass_0 = %s, pass_1 = %s, pass_2 = %s, pass_3 = %s, pass_4 = %s, pass_5 = %s where users = %s and a_key = %s"
+        vars = [pass0, pass1, pass2, pass3, pass4, pass5, user, api_key]
+        print(str_sql, vars)
+        return dataControl(str_sql, vars)
+
     def userPassAtuth(user:str, api_key:str): # 패스워드 검증
         str_sql = "select pass_0, pass_1, pass_2, pass_3, pass_4, pass_5 from login_pass where users = %s and a_key = %s"
         vars = [user, api_key]
@@ -143,6 +149,10 @@ class schema_data: # 검색 관련
             str_sql = "select count(*) from think_ WHERE think_class = %s" # 내용에 분류가 있는지 점검
         elif kind == "verify_source": # 삭제 전 점검
             str_sql = "select count(*) from think_ WHERE think_source = %s" # 내용에 소스가 있는지 점검
+        elif kind == "tags_null": # 연결없는 빈태그 검색
+            str_sql = "select tags.tag_id From tags Left Join tag_think On tag_think.tag_id = tags.tag_id "
+            str_sql = str_sql + "Where tag_think.think_id Is Null"
+            print(str_sql)
         if val:
             vars = [val,]
         else:
@@ -195,6 +205,7 @@ class schema_in: # 입력 관련
 class schema_del:
 ################ 삭제 메서드 ######################
     def del_data_(kind, val): # 분류 / 소스  삭제
+        print(kind, val)
         if kind == "class":
             think_class_count = schema_data.get_data("verify_class", int(val))
             if think_class_count[0][0] > 0:
@@ -213,6 +224,9 @@ class schema_del:
 
         elif kind == "tags_think":
             str_sql = "delete from tag_think where think_id = %s"
+        elif kind == "tags":
+            str_sql = "delete from tags where tag_id = %s"
+
         vars = [val,]
         result = dataControl(str_sql, vars)
         if result:

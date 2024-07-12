@@ -7,7 +7,7 @@ from pydantic import BaseModel
 from passlib.context import CryptContext
 
 from app.config.excuteSL import schema_auth,schema_data, schema_in, schema_del
-from app.config.schema import passNum, think_, search_
+from app.config.schema import passNum,  crePass, think_, search_
 
 app = FastAPI() # FASTAPI
 
@@ -75,9 +75,25 @@ async def create_pass(pass_num: passNum):
     else:
         return False
 
+@app.post("/app/crePass/EDIT/", dependencies=[Depends(get_active_auth)]) # @app 패스워드 변경
+async def edit_passNum(pass_num: crePass):
+    hashed_pass0 = get_pass_hash(pass_num.pass0)
+    hashed_pass1 = get_pass_hash(pass_num.pass1)
+    hashed_pass2 = get_pass_hash(pass_num.pass2)
+    hashed_pass3 = get_pass_hash(pass_num.pass3)
+    hashed_pass4 = get_pass_hash(pass_num.pass4)
+    hashed_pass5 = get_pass_hash(pass_num.pass5)
+
+    result = schema_auth.edit_passNum(USER, in_apikey(API_KEY), hashed_pass0, hashed_pass1, hashed_pass2, hashed_pass3, hashed_pass4, hashed_pass5)
+    if result:
+        return True
+    else:
+        return False
+
 @app.post("/app/chkPass/pass/", dependencies=[Depends(get_active_auth)]) # @app패스워드 검증
 async def check_pass(pass_num: passNum):
     passd = [pass_num.pass0, pass_num.pass1, pass_num.pass2, pass_num.pass3, pass_num.pass4, pass_num.pass5]
+    print(passd)
     result = schema_auth.userPassAtuth(USER, in_apikey(API_KEY))
     i = 0
     for i in range(6):
@@ -85,8 +101,10 @@ async def check_pass(pass_num: passNum):
             break
         i += 1
     if i == 6: # 패스워드가 모두 맞으면
+        print("PASS")
         return True
     else:
+        print("WRONG")
         return False
 
 ############ 검색 ################

@@ -8,6 +8,13 @@ class passNum(BaseModel):
     pass3:Optional[int|str] = None
     pass4:Optional[int|str] = None
     pass5:Optional[int|str] = None
+class crePass(BaseModel):
+    pass0: str
+    pass1: str
+    pass2: str
+    pass3: str
+    pass4: str
+    pass5: str
 
 class think_(BaseModel):
     think_id: Optional[int] = None
