@@ -13,6 +13,7 @@ db_database = db["Database"]
 cre_tables=["think_","tags","subclass","sources","login_pass","tag_think"] #DB 테이블 이름
 
 def connect_db():  #DB 접속 함수
+    print(db_host, db_user, db_passwd, db_database)
     try:
         mydb = connect(
             host=db_host, user=db_user, passwd=db_passwd, database=db_database
