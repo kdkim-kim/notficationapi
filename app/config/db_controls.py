@@ -10,7 +10,7 @@ db_user = db["User"]
 db_passwd = db["Password"]
 db_database = db["Database"]
 
-cre_tables=["think_","tags","subClass","sources","login_pass","tag_think"] #DB 테이블 이름
+cre_tables=["think_","tags","subclass","sources","login_pass","tag_think"] #DB 테이블 이름
 
 def connect_db():  #DB 접속 함수
     print(db_host, db_user, db_passwd, db_database)
