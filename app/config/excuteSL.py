@@ -116,7 +116,7 @@ class schema_data: # 검색 관련
         if kind =="content":
             str_sql = "select * from think_ where think_id = %s"
         elif kind == "class":
-            str_sql = "select * from subClass where subClass_id = %s"
+            str_sql = "select * from subclass where subClass_id = %s"
         elif kind == "source":
             str_sql = "select * from sources where source_id = %s"
         elif kind == "tags":
