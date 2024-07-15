@@ -2,12 +2,12 @@ from datetime import datetime
 from typing import Optional
 from pydantic import BaseModel
 class passNum(BaseModel):
-    pass0:Optional[int|str] = None
-    pass1:Optional[int|str] = None
-    pass2:Optional[int|str] = None
-    pass3:Optional[int|str] = None
-    pass4:Optional[int|str] = None
-    pass5:Optional[int|str] = None
+    pass0:Optional[str] = None
+    pass1:Optional[str] = None
+    pass2:Optional[str] = None
+    pass3:Optional[str] = None
+    pass4:Optional[str] = None
+    pass5:Optional[str] = None
 class crePass(BaseModel):
     pass0: str
     pass1: str
