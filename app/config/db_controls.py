@@ -1,5 +1,4 @@
 import os, json
-#from PySide6.QtWidgets import QApplication, QMessageBox
 from pymysql import connect
 
 file_jason = os.path.join(os.path.dirname(os.path.abspath(__file__)), "secrets.json") # 디비 접속 자료 json 파일
@@ -10,7 +9,7 @@ db_user = db["User"]
 db_passwd = db["Password"]
 db_database = db["Database"]
 
-cre_tables=["think_","tags","subClass","sources","login_pass","tag_think"] #DB 테이블 이름
+cre_tables=["think_","tags","subclass","sources","login_pass","tag_think"] #DB 테이블 이름
 
 def connect_db():  #DB 접속 함수
     print(db_host, db_user, db_passwd, db_database)
@@ -64,7 +63,7 @@ def create_tables(var): #DB_ 테이블 생성
         """
     elif var == "subclass":
         table_sql = """
-            CREATE TABLE `subclass` (
+            CREATE TABLE `subClass` (
 	        `subClass_id` INT(11) NOT NULL AUTO_INCREMENT,
 	        `subClass` VARCHAR(50) NOT NULL COLLATE 'utf8mb4_general_ci',
 	        PRIMARY KEY (`subClass_id`) USING BTREE
@@ -112,7 +111,7 @@ def dataControl(strsql, inVal):    # 데이타 입력 수정 삭제 컨트롤 �
         elif "update" in strsql or "delete" in strsql:
             last_id = inVal
         cursor.close()
-        print(strsql, inVal, last_id)
+        #print(strsql, inVal, last_id)
         return last_id
     except connect.Error as err:
         print(f"Error: {err}, sql: {strsql}, inVal: {inVal}")

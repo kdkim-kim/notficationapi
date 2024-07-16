@@ -36,7 +36,6 @@ class schema_auth: # 로그인 관련
     def edit_passNum(user:str, api_key:str, pass0:str, pass1:str, pass2:str, pass3:str, pass4:str, pass5:str): # 패스워드 변경
         str_sql = "update login_pass set pass_0 = %s, pass_1 = %s, pass_2 = %s, pass_3 = %s, pass_4 = %s, pass_5 = %s where users = %s and a_key = %s"
         vars = [pass0, pass1, pass2, pass3, pass4, pass5, user, api_key]
-        print(str_sql, vars)
         return dataControl(str_sql, vars)
 
     def userPassAtuth(user:str, api_key:str): # 패스워드 검증
@@ -71,7 +70,7 @@ class schema_data: # 검색 관련
             class_source_in = False
         else:
             if search_subClass != None and search_source == None:
-                joinSQL = "Inner Join subClass On subClass.subClass_id = think_.think_class "
+                joinSQL = "Inner Join subclass On subclass.subClass_id = think_.think_class "
                 whereSQL = "where think_.think_class = %s "
                 subVar.append(search_subClass)
             elif search_subClass == None and search_source != None:
@@ -80,7 +79,7 @@ class schema_data: # 검색 관련
                 subVar.append(search_source)
             else: # 분류와 소스 모두 검색 할 때
                 joinSQL = """
-                    Inner Join subClass On subClass.subClass_id = think_.think_class 
+                    Inner Join subclass On subclass.subClass_id = think_.think_class 
                     Inner Join sources On sources.source_id = think_.think_source 
                     """
                 whereSQL = "where think_.think_class = %s and think_.think_source = %s "
@@ -116,7 +115,7 @@ class schema_data: # 검색 관련
         if kind =="content":
             str_sql = "select * from think_ where think_id = %s"
         elif kind == "class":
-            str_sql = "select * from subClass where subClass_id = %s"
+            str_sql = "select * from subclass where subClass_id = %s"
         elif kind == "source":
             str_sql = "select * from sources where source_id = %s"
         elif kind == "tags":
@@ -132,9 +131,9 @@ class schema_data: # 검색 관련
     def get_data(kind, val): # 모든 값/ 특정한 값 반환 함 / 변수가 string
         if kind == "class":
             if val == None:
-                str_sql = "select * from subClass ORDER BY subClass"
+                str_sql = "select * from subclass ORDER BY subClass"
             else:
-                str_sql = "select * from subClass WHERE subClass = %s"
+                str_sql = "select * from subclass WHERE subClass = %s"
         elif kind == "source":
             if val == None:
                 str_sql = "select * from sources ORDER BY source"
@@ -171,7 +170,7 @@ class schema_in: # 입력 관련
 ################## 입력 메서드 ######################
     def in_sub_data(kind:str, val:str): # 분류 / 소스  등록
         if kind == "class":
-            str_sql = "insert into subClass(subClass) values(%s)"
+            str_sql = "insert into subclass(subClass) values(%s)"
         elif kind == "source":
             str_sql = "insert into sources(source) values(%s)"
         elif kind == "tags":
@@ -211,7 +210,7 @@ class schema_del:
             if think_class_count[0][0] > 0:
                 return "unable"
             else:
-                str_sql = "delete from subClass where subClass_id = %s"
+                str_sql = "delete from subclass where subClass_id = %s"
 
         elif kind == "source":
             think_source_count = schema_data.get_data("verify_source", int(val))
