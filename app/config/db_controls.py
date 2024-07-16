@@ -21,6 +21,7 @@ def connect_db():  #DB 접속 함수
     except connect.Error as err:
         print(err)
         return None
+
 def create_table_if_not_exists():   #테이블이 없을시 생성
     mydb = connect_db()
     cursor = mydb.cursor()
