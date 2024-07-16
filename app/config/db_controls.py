@@ -64,7 +64,7 @@ def create_tables(var): #DB_ 테이블 생성
         """
     elif var == "subclass":
         table_sql = """
-            CREATE TABLE `subClass` (
+            CREATE TABLE `subclass` (
 	        `subClass_id` INT(11) NOT NULL AUTO_INCREMENT,
 	        `subClass` VARCHAR(50) NOT NULL COLLATE 'utf8mb4_general_ci',
 	        PRIMARY KEY (`subClass_id`) USING BTREE
