@@ -30,7 +30,7 @@ class schema_auth: # 로그인 관련
     def cre_pass(user:str, api_key:str, pass0:str, pass1:str, pass2:str, pass3:str, pass4:str, pass5:str): # 패스워드 생성
         str_sql = "update login_pass set pass_0 = %s, pass_1 = %s, pass_2 = %s, pass_3 = %s, pass_4 = %s, pass_5 = %s where users = %s and a_key = %s"
         vars = [pass0, pass1, pass2, pass3, pass4, pass5, user, api_key]
-        print(str_sql, vars)
+        #print(str_sql, vars)
         return dataControl(str_sql, vars)
 
     def edit_passNum(user:str, api_key:str, pass0:str, pass1:str, pass2:str, pass3:str, pass4:str, pass5:str): # 패스워드 변경
@@ -65,7 +65,7 @@ class schema_data: # 검색 관련
         joinSQL = "" # 조인 sql
         whereSQL = "" # where sql
         class_source_in = bool # 분류나 소스 검색이 있는지 값
-        print(search_subClass, search_source)
+        #print(search_subClass, search_source)
         if search_subClass == None and search_source == None:
             class_source_in = False
         else:
@@ -106,7 +106,7 @@ class schema_data: # 검색 관련
             think_.think_fileName, think_.think_editDate from think_
         """
         str_sql = f"{str_sql} {joinSQL} {whereSQL} order by think_.think_editDate desc LIMIT 30"
-        print(str_sql, subVar)
+        #print(str_sql, subVar)
         result = dataSearch(str_sql, subVar)
         #result = ((search_tag_0, search_tag_1, search_tag_2, search_tag_3, search_tag_4, search_subClass, search_source))
         return result
@@ -151,14 +151,14 @@ class schema_data: # 검색 관련
         elif kind == "tags_null": # 연결없는 빈태그 검색
             str_sql = "select tags.tag_id From tags Left Join tag_think On tag_think.tag_id = tags.tag_id "
             str_sql = str_sql + "Where tag_think.think_id Is Null"
-            print(str_sql)
+            #print(str_sql)
         if val:
             vars = [val,]
         else:
             vars = None
 
         result = dataSearch(str_sql, vars)
-        print(result)
+        #print(result)
         return result
 
     def get_widget_tag(val:str): # 태그 위젯용 리스트
@@ -204,7 +204,7 @@ class schema_in: # 입력 관련
 class schema_del:
 ################ 삭제 메서드 ######################
     def del_data_(kind, val): # 분류 / 소스  삭제
-        print(kind, val)
+        #print(kind, val)
         if kind == "class":
             think_class_count = schema_data.get_data("verify_class", int(val))
             if think_class_count[0][0] > 0:
