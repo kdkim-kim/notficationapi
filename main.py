@@ -1,9 +1,6 @@
 from typing import Union
 from fastapi import FastAPI, Depends, HTTPException, Header, status
 from fastapi.security import APIKeyHeader
-from starlette.requests import Request
-from starlette.responses import JSONResponse
-from pydantic import BaseModel
 from passlib.context import CryptContext
 
 from app.config.excuteSL import schema_auth,schema_data, schema_in, schema_del
@@ -31,21 +28,17 @@ def verify_password(plain_password, hashed_password): # 입력 패스워드와 �
 
 
 async def get_api_key(api_key_: str = Depends(api_key_header), username: str = Depends(username)): # 사용자와 클라이언트 키값 비교
-    #api_key_var_ = in_apikey(api_key_) # DB 자료 비교용 키값
-    #print(api_key_var_)
     result = schema_auth.userAPIkey(username, in_apikey(api_key_)) # 관리자로 부터 할당 받은 사용자명과 보안키 값 검증
     if result:
         global API_KEY, USER
         API_KEY = api_key_ # 보안키 값을 전역변수에 할당
         USER = username
-        print(API_KEY, USER)
         return
     else:
         raise HTTPException(status_code=400, detail="Not valid")
 
 async def get_active_auth(api_key: str = Depends(api_key_header)): # 접속시 할당 받은 키 값과 접속프로그램의 키캆 비교
     global API_KEY, USER
-    #print(api_key, API_KEY)
     if API_KEY == api_key:
         return
     else:
@@ -93,7 +86,6 @@ async def edit_passNum(pass_num: crePass):
 @app.post("/app/chkPass/pass/", dependencies=[Depends(get_active_auth)]) # @app패스워드 검증
 async def check_pass(pass_num: passNum):
     passd = [pass_num.pass0, pass_num.pass1, pass_num.pass2, pass_num.pass3, pass_num.pass4, pass_num.pass5]
-    print(passd)
     result = schema_auth.userPassAtuth(USER, in_apikey(API_KEY))
     i = 0
     for i in range(6):
@@ -101,10 +93,8 @@ async def check_pass(pass_num: passNum):
             break
         i += 1
     if i == 6: # 패스워드가 모두 맞으면
-        print("PASS")
         return True
     else:
-        print("WRONG")
         return False
 
 ############ 검색 ################
@@ -144,7 +134,6 @@ async def inSubData(kind: str, val: str):
 
 @app.get("/app/inThinkTag/", dependencies=[Depends(get_active_auth)]) # @app 분류list
 async def inThinkTag(th_id: int, tag: int):
-    print(th_id, tag)
     result = schema_in.in_think_tag(th_id, tag)
     return {result}
 
@@ -156,7 +145,6 @@ async def inThinkups(in_think: think_):
     think_source = in_think.think_source
     think_filePath = in_think.think_filePath
     think_fileName = in_think.think_fileName
-    print(contents)
     result = schema_in.in_thinks(title, contents, think_class, think_source, think_filePath, think_fileName)
     return {result}
 
@@ -170,7 +158,6 @@ async def updateThinks(in_think: think_):
     think_source = in_think.think_source
     think_filePath = in_think.think_filePath
     think_fileName = in_think.think_fileName
-    print(contents)
     result = schema_in.update_thinks(think_id, title, contents, think_class, think_source, think_filePath, think_fileName)
     return {result[0]}
 

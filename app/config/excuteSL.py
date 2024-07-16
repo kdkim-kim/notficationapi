@@ -197,9 +197,9 @@ class schema_in: # 입력 관련
             where think_id = %s
         """
         vars = [title, contents, think_class, think_source, think_filePath, think_fileName, datetime.now().strftime('%Y-%m-%d'), think_id]
-        print(str)
+        #print(str)
         result = dataControl(str_sql, vars)
-        print(result)
+        #print(result)
         return result
 class schema_del:
 ################ 삭제 메서드 ######################
